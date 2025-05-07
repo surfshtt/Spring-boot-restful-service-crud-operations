@@ -1,6 +1,6 @@
-# Spring Boot MySQL CRUD Example
+# Spring Boot MySQL CRUD
 
-This project is a simple RESTful API built with Spring Boot that demonstrates how to perform CRUD (Create, Read, Update, Delete) operations with a MySQL database.
+This project is a simple RESTful API built with Spring Boot in which i learned how to perform CRUD (Create, Read, Update, Delete) operations with a MySQL database.
 
 ## Features
 
