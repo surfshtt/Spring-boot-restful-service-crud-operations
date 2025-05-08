@@ -1,1 +1,163 @@
-<b>asd</b>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Management System</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Student Management System</h1>
+        
+        <!-- Add Student Form -->
+        <div class="form-section">
+            <h2>Add New Student</h2>
+            <form id="addStudentForm">
+                <input type="text" id="name" placeholder="Student Name" required>
+                <input type="number" id="age" placeholder="Age" required>
+                <button type="submit">Add Student</button>
+            </form>
+        </div>
+
+        <!-- Get Student Form -->
+        <div class="form-section">
+            <h2>Get Student by ID</h2>
+            <form id="getStudentForm">
+                <input type="number" id="studentId" placeholder="Student ID" required>
+                <button type="submit">Get Student</button>
+            </form>
+        </div>
+
+        <!-- Update Student Form -->
+        <div class="form-section">
+            <h2>Update Student</h2>
+            <form id="updateStudentForm">
+                <input type="number" id="updateId" placeholder="Student ID" required>
+                <input type="text" id="updateName" placeholder="New Name" required>
+                <input type="number" id="updateAge" placeholder="New Age" required>
+                <button type="submit">Update Student</button>
+            </form>
+        </div>
+
+        <!-- Delete Student Form -->
+        <div class="form-section">
+            <h2>Delete Student</h2>
+            <form id="deleteStudentForm">
+                <input type="number" id="deleteId" placeholder="Student ID" required>
+                <button type="submit">Delete Student</button>
+            </form>
+        </div>
+
+        <!-- Display Results -->
+        <div class="results-section">
+            <h2>Results</h2>
+            <div id="results"></div>
+        </div>
+
+        <!-- Display All Students -->
+        <div class="students-list">
+            <h2>All Students</h2>
+            <button id="getAllStudents">Show All Students</button>
+            <div id="studentsList"></div>
+        </div>
+    </div>
+
+    <script>
+        const API_BASE_URL = '/api/v1/students';
+
+        // Add Student
+        document.getElementById('addStudentForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const student = {
+                name: document.getElementById('name').value,
+                age: parseInt(document.getElementById('age').value)
+            };
+
+            try {
+                const response = await fetch(`${API_BASE_URL}/save`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(student)
+                });
+                showResult('Student added successfully!');
+                document.getElementById('addStudentForm').reset();
+            } catch (error) {
+                showResult('Error adding student: ' + error.message);
+            }
+        });
+
+        // Get Student by ID
+        document.getElementById('getStudentForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const id = document.getElementById('studentId').value;
+
+            try {
+                const response = await fetch(`${API_BASE_URL}/${id}`);
+                const student = await response.json();
+                showResult(JSON.stringify(student, null, 2));
+            } catch (error) {
+                showResult('Error getting student: ' + error.message);
+            }
+        });
+
+        // Update Student
+        document.getElementById('updateStudentForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const student = {
+                id: parseInt(document.getElementById('updateId').value),
+                name: document.getElementById('updateName').value,
+                age: parseInt(document.getElementById('updateAge').value)
+            };
+
+            try {
+                const response = await fetch(`${API_BASE_URL}/update_student`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(student)
+                });
+                const updatedStudent = await response.json();
+                showResult('Student updated: ' + JSON.stringify(updatedStudent, null, 2));
+            } catch (error) {
+                showResult('Error updating student: ' + error.message);
+            }
+        });
+
+        // Delete Student
+        document.getElementById('deleteStudentForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const id = document.getElementById('deleteId').value;
+
+            try {
+                await fetch(`${API_BASE_URL}/delete_student/${id}`, {
+                    method: 'DELETE'
+                });
+                showResult('Student deleted successfully!');
+            } catch (error) {
+                showResult('Error deleting student: ' + error.message);
+            }
+        });
+
+        // Get All Students
+        document.getElementById('getAllStudents').addEventListener('click', async () => {
+            try {
+                const response = await fetch(API_BASE_URL);
+                const students = await response.json();
+                const studentsList = document.getElementById('studentsList');
+                studentsList.innerHTML = '<pre>' + JSON.stringify(students, null, 2) + '</pre>';
+            } catch (error) {
+                showResult('Error getting students: ' + error.message);
+            }
+        });
+
+        function showResult(message) {
+            const resultsDiv = document.getElementById('results');
+            resultsDiv.innerHTML = '<pre>' + message + '</pre>';
+        }
+    </script>
+</body>
+</html> 
